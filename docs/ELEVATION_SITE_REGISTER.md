@@ -27,7 +27,14 @@ The system rejects a duplicate open sign-on at the same site. An open session ap
 
 Open `/site-register` while signed in. The table shows each attendance session, site, worker, company, timestamps, and calculated hours. Choose **Export CSV** for the invoice period.
 
-For each invoice line, compare the contractor, worker, date/site, and invoiced hours against the exported hours. Flag an invoice line when the worker is absent from the export, is still marked `ON SITE`, or the invoiced hours do not equal the recorded hours. Keep the exported CSV with the invoice as the reconciliation record.
+For an automatic line-by-line comparison, open `/site-register/invoice` while signed in and paste invoice CSV using this exact header and one line per billed worker/day/site:
+
+```text
+company,worker,site,date,hours
+Acme Interiors,Jane Smith,North Terrace Fitout,2026-11-05,7.5
+```
+
+The result reports `MATCH`, `VARIANCE`, `NO_ATTENDANCE`, or `OPEN_SESSION`, along with recorded hours and the invoice-hour variance. Keep the exported attendance CSV and comparison output with the invoice as the reconciliation record.
 
 ## Operations
 
