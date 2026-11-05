@@ -10,8 +10,8 @@ Open `/login` and sign in as `elevation-admin` with the initial password held in
 
 1. Sign in, then open `/site-register`.
 2. Enter the site name and address, then choose **Create site QR**.
-3. Open the resulting QR link on a phone to confirm it loads.
-4. Print that URL as a QR code: use a trusted QR generator, set the QR target to the exact displayed URL, print at least 40 mm square, and include the readable URL below it.
+3. Click **Open branded A4 QR sign** for that site.
+4. Confirm the live QR renders, then choose **Print this A4 sign**. The print page is single-page, carries Elevation Built styling, the site/address, the actual QR image, readable fallback URL, sign-on instructions, and its invoice-audit purpose.
 5. Mount the sign at the site entry. Do not reuse a QR between sites.
 
 ## Worker sign-on / sign-off
