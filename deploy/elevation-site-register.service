@@ -1,0 +1,18 @@
+[Unit]
+Description=Elevation Built Site Register
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/john/src/elevation-site-register
+EnvironmentFile=/home/john/src/elevation-site-register/.env
+Environment=PORT=4011
+Environment=HOSTNAME=127.0.0.1
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node /home/john/src/elevation-site-register/.next/standalone/server.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

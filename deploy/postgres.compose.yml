@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: elevation_site_register_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: elevation
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: elevation_site_register
+      TZ: Australia/Adelaide
+    volumes:
+      - elevation_site_register_db:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:15434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U elevation -d elevation_site_register"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+volumes:
+  elevation_site_register_db:

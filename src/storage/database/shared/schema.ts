@@ -217,6 +217,37 @@ export const visitRecords = pgTable('visit_records', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+// ==================== Elevation Built site register ====================
+// Deliberately separate from the legacy visitor/appointment model.
+export const sites = pgTable('sites', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  qrToken: text('qr_token').notNull().unique(),
+  address: text('address'),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export const siteWorkers = pgTable('site_workers', {
+  id: serial('id').primaryKey(),
+  fullName: text('full_name').notNull(),
+  phone: text('phone').notNull(),
+  company: text('company').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// A session is the accounting record. Corrections must be added as a future
+// audit feature rather than overwriting a completed session.
+export const siteAttendance = pgTable('site_attendance', {
+  id: serial('id').primaryKey(),
+  siteId: integer('site_id').notNull().references(() => sites.id),
+  workerId: integer('worker_id').notNull().references(() => siteWorkers.id),
+  signedOnAt: timestamp('signed_on_at').notNull().defaultNow(),
+  signedOffAt: timestamp('signed_off_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
 // ==================== 访客分类枚举 ====================
 export const VISITOR_CATEGORY = {
   BUSINESS: 'business',

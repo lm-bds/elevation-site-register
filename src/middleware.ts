@@ -81,6 +81,7 @@ const protectedPaths = [
   '/admin/security',
   '/admin/settings',
   '/admin/qrcode',
+  '/site-register',
 ];
 
 // 不需要登录就能访问的页面
@@ -129,6 +130,7 @@ export function middleware(request: NextRequest) {
     '/api/scan-appointment', // 访客扫码预约API（自带速率限制）
     '/api/settings/public', // 公开设置API（审核开关）
     '/api/visitor-board', // 访客看板API（自带速率限制+脱敏）
+    '/api/site-register/scan', // public QR attendance action
     '/api/health', // 健康检查API（供 Docker/Nginx 使用）
   ];
 
