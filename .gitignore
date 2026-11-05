@@ -25,6 +25,9 @@ coverage/
 .env.production
 .env.production.local
 
+# Runtime deployment secrets and one-time credentials
+.runtime/
+
 # Logs
 logs/
 *.log
