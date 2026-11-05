@@ -268,46 +268,33 @@ export const ROLE_LABELS = {
   visitor: '访客',
 } as const;
 
-// 创建默认用户
+// Create exactly one administrator on an empty database. Production never ships a known password.
 export async function createDefaultUsers() {
-  try {
-    // 检查是否已存在用户
-    const existingUsers = await db.select().from(users);
-    if (existingUsers.length > 0) {
-      console.log('Users already exist, skipping default user creation');
-      return;
-    }
+  const existingUsers = await db.select().from(users).limit(1);
+  if (existingUsers.length > 0) return;
 
-    // 创建默认用户
-    const defaultUsers = [
-      { username: 'admin', password: 'admin123', name: '系统管理员', role: USER_ROLE.ADMIN },
-      { username: 'security', password: 'security123', name: '门卫人员', role: USER_ROLE.SECURITY },
-      { username: 'employee', password: 'employee123', name: '员工代表', role: USER_ROLE.EMPLOYEE },
-      { username: 'visitor', password: 'visitor123', name: '访客代表', role: USER_ROLE.VISITOR },
-    ];
-
-    for (const user of defaultUsers) {
-      await db.insert(users).values({
-        username: user.username,
-        password: hashPassword(user.password),
-        name: user.name,
-        role: user.role,
-        status: 'active',
-      });
-    }
-
-    console.log('Default users created successfully');
-
-    // 初始化默认系统设置
-    const { sql } = await import('drizzle-orm');
-    await db.execute(sql`
-      INSERT INTO system_settings (key, value, description)
-      VALUES ('review_enabled', 'true', '审核开关：开启后访客预约需被访人审核')
-      ON CONFLICT (key) DO NOTHING
-    `);
-  } catch (error) {
-    console.error('Failed to create default users:', error);
+  const username = process.env.BOOTSTRAP_ADMIN_USERNAME;
+  const password = process.env.BOOTSTRAP_ADMIN_PASSWORD;
+  if (!username || !password || password.length < 16) {
+    throw new Error('Empty database requires BOOTSTRAP_ADMIN_USERNAME and a 16+ character BOOTSTRAP_ADMIN_PASSWORD');
   }
+
+  await db.insert(users).values({
+    username,
+    password: hashPassword(password),
+    name: 'Elevation Built administrator',
+    role: USER_ROLE.ADMIN,
+    status: 'active',
+    mustChangePassword: true,
+  });
+
+  const { sql } = await import('drizzle-orm');
+  await db.execute(sql`
+    INSERT INTO system_settings (key, value, description)
+    VALUES ('review_enabled', 'false', 'Legacy visitor-review switch')
+    ON CONFLICT (key) DO NOTHING
+  `);
+  console.log('[bootstrap] created configured administrator; password change is required on first login');
 }
 
 // ==================== API 路由认证辅助 ====================

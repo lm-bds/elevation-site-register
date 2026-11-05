@@ -45,8 +45,8 @@ function pushSchema(): Promise<void> {
 /**
  * 应用启动时的一次性数据库自举：
  * 1. 若 drizzle-kit 可用，自动将表结构同步到数据库（替代手动 db:push）
- * 2. 幂等创建默认账号（admin/security/employee/visitor）与系统设置
- * 失败不阻塞服务启动，仅记录日志。
+ * 2. On an empty database, create only the administrator explicitly supplied in env.
+ * A missing bootstrap credential is a startup failure, never a fallback to public defaults.
  */
 export async function bootstrapDatabase(): Promise<void> {
   if (bootstrapped) return;
@@ -69,11 +69,7 @@ export async function bootstrapDatabase(): Promise<void> {
     console.warn('[bootstrap] 未找到 drizzle-kit，跳过自动建表；若数据库为空请先执行 `pnpm db:push`');
   }
 
-  // 2) 默认账号 + 系统设置（幂等）
-  try {
-    await createDefaultUsers();
-    console.log('[bootstrap] 默认账号已确保存在（admin / security / employee / visitor）');
-  } catch (e) {
-    console.error('[bootstrap] 默认账号初始化失败：', (e as Error).message);
-  }
+  // 2) Explicit administrator bootstrap. Do not supply any credential defaults.
+  await createDefaultUsers();
+  console.log('[bootstrap] administrator bootstrap completed');
 }
