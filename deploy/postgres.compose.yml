@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: elevation
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: elevation_site_register
-      TZ: Australia/Adelaide
+      TZ: UTC
     volumes:
       - elevation_site_register_db:/var/lib/postgresql/data
     ports:
