@@ -31,9 +31,9 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success('登录成功，正在跳转...');
+        toast.success('Signed in. Opening the Site Register…');
         
-        // 检查是否需要强制修改密码
+        // 检查是否需要强制修改Password
         if (data.mustChangePassword) {
           router.push('/change-password?force=true');
           return;
@@ -41,14 +41,14 @@ export default function LoginPage() {
         
         const role = data.user.role;
         if (role === 'admin') {
-          router.push('/management');
+          router.push('/site-register');
         } else if (role === 'security') {
           router.push('/security');
         } else {
           router.push('/');
         }
       } else {
-        toast.error(data.error || '用户名或密码错误');
+        toast.error(data.error || 'Incorrect username or password');
       }
     } catch {
       toast.error('网络异常，请稍后重试');
@@ -84,14 +84,14 @@ export default function LoginPage() {
               <Building2 className="h-12 w-12 text-white" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold mb-4 tracking-tight">访客管理系统</h1>
+          <h1 className="text-4xl font-bold mb-4 tracking-tight">Elevation Built</h1>
           <p className="text-blue-100 text-lg leading-relaxed max-w-sm mx-auto">
-            统一管理访客预约、签到签退<br />让每一次来访都安全、高效
+            Site sign-on, live attendance and invoice-hours reconciliation
           </p>
 
           {/* 特性标签 */}
           <div className="flex flex-wrap justify-center gap-2 mt-8">
-            {['智能预约', '安全管控', '数据分析', '快速签到'].map((tag) => (
+            {['Site QR codes', 'Live on-site register', 'Attendance hours', 'Invoice comparison'].map((tag) => (
               <span
                 key={tag}
                 className="px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm text-sm border border-white/20"
@@ -116,26 +116,26 @@ export default function LoginPage() {
           {/* 标题 */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50 lg:text-3xl">
-              欢迎回来
+              Welcome back
             </h2>
             <p className="mt-2 text-slate-500 dark:text-slate-400">
-              登录以继续使用访客管理系统
+              Sign in to the Elevation Built Site Register
             </p>
           </div>
 
           {/* 表单 */}
           <form onSubmit={handleLogin} className="space-y-5">
-            {/* 用户名 */}
+            {/* Username */}
             <div className="space-y-2">
               <Label htmlFor="username" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                用户名
+                Username
               </Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   id="username"
                   type="text"
-                  placeholder="请输入用户名"
+                  placeholder="Enter username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
@@ -145,17 +145,17 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* 密码 */}
+            {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                密码
+                Password
               </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   id="password"
                   type="password"
-                  placeholder="请输入密码"
+                  placeholder="Enter password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
