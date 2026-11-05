@@ -22,7 +22,7 @@ export default function ChangePasswordPage() {
   return (
     <React.Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-        <div className="animate-pulse text-slate-400">加载中...</div>
+        <div className="animate-pulse text-slate-400">Loading…</div>
       </div>
     }>
       <ChangePasswordContent />
@@ -88,17 +88,17 @@ function ChangePasswordContent() {
     e.preventDefault();
 
     if (!isPasswordValid) {
-      toast.error('密码不符合复杂度要求');
+      toast.error('Password does not meet the required complexity.');
       return;
     }
 
     if (!passwordsMatch) {
-      toast.error('两次输入的密码不一致');
+      toast.error('Passwords do not match.');
       return;
     }
 
     if (!forceChange && !formData.oldPassword) {
-      toast.error('请输入原密码');
+      toast.error('Enter current password');
       return;
     }
 
@@ -115,18 +115,18 @@ function ChangePasswordContent() {
       });
 
       if (response.ok) {
-        toast.success('密码修改成功，正在跳转...');
+        toast.success('Password changed. Redirecting…');
         // 使用 window.location 硬跳转确保新 cookie 完全生效
         setTimeout(() => {
           window.location.href = '/';
         }, 800);
       } else {
         const data = await response.json();
-        toast.error(data.error || '修改失败');
+        toast.error(data.error || 'Unable to change password.');
       }
     } catch (error) {
       console.error('Change password failed:', error);
-      toast.error('修改密码失败');
+      toast.error('Password change failed.');
     } finally {
       setIsLoading(false);
     }
@@ -139,11 +139,11 @@ function ChangePasswordContent() {
           <div className="mx-auto w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4">
             <KeyRound className="h-8 w-8 text-blue-600 dark:text-blue-400" />
           </div>
-          <CardTitle className="text-xl font-bold">修改密码</CardTitle>
+          <CardTitle className="text-xl font-bold">Change password</CardTitle>
           <CardDescription className="text-sm">
             {forceChange
-              ? '首次登录需要修改初始密码'
-              : '请设置一个安全的新密码'}
+              ? 'Change your initial password before first use'
+              : 'Set a secure new password'}
           </CardDescription>
         </CardHeader>
         <CardContent className="px-6 pb-6">
@@ -152,17 +152,17 @@ function ChangePasswordContent() {
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
                 <p className="text-xs text-amber-700 dark:text-amber-300">
-                  为了账户安全，您必须修改初始密码后才能继续使用系统。
+                  For account security, change the initial password before continuing.
                 </p>
               </div>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* 原密码（非强制修改时显示） */}
+            {/* Current password（非强制修改时显示） */}
             {!forceChange && (
               <div className="space-y-2">
-                <Label htmlFor="oldPassword">原密码</Label>
+                <Label htmlFor="oldPassword">Current password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input
@@ -170,7 +170,7 @@ function ChangePasswordContent() {
                     type={showOldPassword ? 'text' : 'password'}
                     value={formData.oldPassword}
                     onChange={(e) => setFormData({ ...formData, oldPassword: e.target.value })}
-                    placeholder="请输入原密码"
+                    placeholder="Enter current password"
                     className="pl-10 pr-10 h-10 rounded-lg"
                   />
                   <button
@@ -184,9 +184,9 @@ function ChangePasswordContent() {
               </div>
             )}
 
-            {/* 新密码 */}
+            {/* New password */}
             <div className="space-y-2">
-              <Label htmlFor="newPassword">新密码</Label>
+              <Label htmlFor="newPassword">New password</Label>
               <div className="relative">
                 <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
@@ -194,7 +194,7 @@ function ChangePasswordContent() {
                   type={showNewPassword ? 'text' : 'password'}
                   value={formData.newPassword}
                   onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                  placeholder="请输入新密码"
+                  placeholder="请输入New password"
                   className="pl-10 pr-10 h-10 rounded-lg"
                 />
                 <button
@@ -207,43 +207,43 @@ function ChangePasswordContent() {
               </div>
             </div>
 
-            {/* 密码复杂度提示 */}
+            {/* Password requirements */}
             {formData.newPassword && (
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className={cn('flex items-center gap-1', validation.length ? 'text-green-600' : 'text-slate-400')}>
                   {validation.length ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
-                  至少 {policy.minLength} 位
+                  At least {policy.minLength} characters
                 </div>
                 {policy.requireUppercase && (
                   <div className={cn('flex items-center gap-1', validation.uppercase ? 'text-green-600' : 'text-slate-400')}>
                     {validation.uppercase ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
-                    包含大写字母
+                    Contains an uppercase letter
                   </div>
                 )}
                 {policy.requireLowercase && (
                   <div className={cn('flex items-center gap-1', validation.lowercase ? 'text-green-600' : 'text-slate-400')}>
                     {validation.lowercase ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
-                    包含小写字母
+                    Contains a lowercase letter
                   </div>
                 )}
                 {policy.requireNumber && (
                   <div className={cn('flex items-center gap-1', validation.number ? 'text-green-600' : 'text-slate-400')}>
                     {validation.number ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
-                    包含数字
+                    Contains a number
                   </div>
                 )}
                 {policy.requireSpecialChar && (
                   <div className={cn('flex items-center gap-1 col-span-2', validation.special ? 'text-green-600' : 'text-slate-400')}>
                     {validation.special ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
-                    包含特殊字符
+                    Contains a special character
                   </div>
                 )}
               </div>
             )}
 
-            {/* 确认密码 */}
+            {/* Confirm password */}
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">确认密码</Label>
+              <Label htmlFor="confirmPassword">Confirm password</Label>
               <div className="relative">
                 <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
@@ -251,7 +251,7 @@ function ChangePasswordContent() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  placeholder="请再次输入新密码"
+                  placeholder="请再次输入New password"
                   className="pl-10 pr-10 h-10 rounded-lg"
                 />
                 <button
@@ -263,7 +263,7 @@ function ChangePasswordContent() {
                 </button>
               </div>
               {formData.confirmPassword && !passwordsMatch && (
-                <p className="text-xs text-red-500">两次输入的密码不一致</p>
+                <p className="text-xs text-red-500">Passwords do not match.</p>
               )}
             </div>
 
@@ -272,19 +272,19 @@ function ChangePasswordContent() {
               className="w-full h-10 rounded-lg bg-blue-600 hover:bg-blue-700"
               disabled={isLoading || !isPasswordValid || !passwordsMatch}
             >
-              {isLoading ? '修改中...' : '确认修改'}
+              {isLoading ? 'Changing password…' : 'Change password'}
             </Button>
             
             {/* 禁用原因提示 */}
             {(!isPasswordValid || !passwordsMatch) && (
               <div className="mt-3 p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50">
-                <p className="text-xs text-red-600 dark:text-red-400 font-medium mb-1.5">无法保存，请检查以下问题：</p>
+                <p className="text-xs text-red-600 dark:text-red-400 font-medium mb-1.5">Cannot save — check the following:</p>
                 <ul className="text-xs text-red-600 dark:text-red-400 space-y-0.5">
                   {!isPasswordValid && (
-                    <li>• 密码不符合复杂度要求（请确保所有条件打勾）</li>
+                    <li>• Password does not meet the required complexity.（请确保所有条件打勾）</li>
                   )}
                   {!passwordsMatch && (
-                    <li>• 两次输入的密码不一致</li>
+                    <li>• Passwords do not match.</li>
                   )}
                 </ul>
               </div>
